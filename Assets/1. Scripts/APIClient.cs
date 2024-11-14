@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Net;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -19,20 +20,26 @@ public class ActorList
 
 public class APIClient : MonoBehaviour
 {
+    public TMP_InputField idStart, idEnd;
+    public TextMeshProUGUI result;
+
     private string baseUrl = "http://localhost:8000";
     private string endPoint;
-    private int idStart, idEnd;
+    //private int idStart, idEnd;
 
     private void Awake()
     {
-        endPoint = $"/read-by-id?id_start={idStart}&id_end={idEnd}";
 
-        idStart = 10;
-        idEnd = 15;
     }
 
     void Start()
     {
+
+    }
+
+    public void ButtonGet()
+    {
+        endPoint = $"/read-by-id?id_start={idStart.text}&id_end={idEnd.text}";
         StartCoroutine(GetRequest(endPoint));
     }
 
@@ -78,9 +85,15 @@ public class APIClient : MonoBehaviour
         string wrappedJson = "{\"actors\":" + json + "}";
         ActorList actorList = JsonUtility.FromJson<ActorList>(wrappedJson);
 
+        string res = "";
         foreach (Actor actor in actorList.actors)
         {
-            Debug.Log($"ID: {actor.actor_id}, First Name: {actor.first_name}, Last Name: {actor.last_name}");
+            //Debug.Log($"ID: {actor.actor_id}, First Name: {actor.first_name}, Last Name: {actor.last_name}");
+            res += $"ID: {actor.actor_id.ToString().PadRight(5)}, First Name: {actor.first_name.PadRight(15)}, Last Name: {actor.last_name.PadRight(15)}\n";
         }
+
+        result.text = res;
+
+        print(res);
     }
 }
